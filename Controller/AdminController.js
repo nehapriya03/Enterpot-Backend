@@ -55,7 +55,7 @@ exports.addAdmin = async (req, res) => {
       });
     })
     .catch((error) => {
-      console.error(`An admin with email: ${email} does not exists.`);
+      console.error(`An admin with email: ${email} does not exists.`, error);
       res.status(404).send(`An admin with email: ${email} does not exists.`);
     });
 };
@@ -179,4 +179,35 @@ exports.updateAdminById = async (req, res) => {
       );
       return res.status(500).send(ERROR_MESSAGE);
     });
+};
+
+exports.adminLogin = async (req, res) => {
+  let { email, password } = req.body;
+  await adminRepository.getAdminByEmail(email).then((adminFound) => {
+    if (adminFound === null) {
+      console.error(`No admin with email: ${email} has been found.}`);
+      return res
+        .status(404)
+        .send(`No admin with email: ${email} has been found.}`);
+    }
+
+    bcrypt.compare(password, adminFound.password).then((matches) => {
+      if (matches) {
+        const token = jwt.sign(
+          {
+            email: adminFound.email,
+            password: adminFound.password,
+          },
+          envData.JWT_SECRETKEY,
+          {
+            expiresIn: "1h",
+          }
+        );
+        console.info(`Login sucessfull.`);
+        return res.status(200).json({ adminFound, token });
+      }
+      console.warn("Incorrect credentials");
+      return res.status(400).send(`Incorrect credentials.`);
+    });
+  });
 };

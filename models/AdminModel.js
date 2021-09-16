@@ -5,6 +5,7 @@ const Admin = mongoose.Schema({
   id: {
     type: mongoose.Types.ObjectId,
     unique: true,
+    // default: new mongoose.Types.ObjectId(),
   },
   email: {
     type: String,
