@@ -25,7 +25,7 @@ exports.getAdminById = async (id) => {
 exports.updateAdminById = async (admin) => {
   try {
     let { password } = admin;
-    return await Admin.updateOne({ _id: admin.id }, { $set: { password } });
+    return await Admin.updateOne({ _id: admin._id }, { $set: { password } });
   } catch (error) {
     console.error(error);
     throw error;

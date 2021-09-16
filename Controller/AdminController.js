@@ -114,22 +114,22 @@ exports.getAdminByEmail = async (req, res) => {
 
 exports.updateAdminById = async (req, res) => {
   const { adminId } = req.params;
-  let { id, email, password } = req.body;
+  let { _id, email, password } = req.body;
 
-  if (id !== adminId) {
+  if (_id !== adminId) {
     console.error("Id in the body and path must be same");
     return res.status(400).send("The ID in the body and the path must be same");
   }
 
-  let admin = {
-    id,
+  let admin = new Admin({
+    _id,
     email,
     password,
-  };
+  });
   await adminRepository
     .getAdminById(adminId)
-    .then(async (foundUser) => {
-      if (foundUser === null) {
+    .then(async (foundAdmin) => {
+      if (foundAdmin === null) {
         console.error(`Admin with id: ${adminId} does not exists.`);
         return res
           .status(404)
@@ -148,20 +148,24 @@ exports.updateAdminById = async (req, res) => {
         await adminRepository
           .updateAdminById(admin)
           .then((adminUpdated) => {
-            if (adminUpdated.n > 0) {
+            if (adminUpdated.n === 0) {
               console.error(
-                `Update Failed: admin with Id: ${id} does not exists`
+                `Update Failed: admin with Id: ${_id} does not exists`
               );
               return res
                 .status(400)
-                .send(`Update Failed: Admin with id: ${id} does not exists`);
+                .send(`Update Failed: Admin with id: ${_id} does not exists`);
             }
-            console.info(`Admin with id: ${id} has been sucessfully updated. `);
-            return res.status(200).json(admin);
+            console.info(
+              `Admin with id: ${_id} has been sucessfully updated. `
+            );
+            return res
+              .status(200)
+              .send(`Password has been sucessfully updated.`);
           })
           .catch((error) => {
             console.error(
-              `There was an error while updating the amin with id ${id}.`,
+              `There was an error while updating the amin with id ${_id}.`,
               error
             );
             return res.status(500).send(ERROR_MESSAGE);
@@ -170,7 +174,8 @@ exports.updateAdminById = async (req, res) => {
     })
     .catch((error) => {
       console.log(
-        `An admin with id: ${id} was found but could not be updated.`
+        `An admin with id: ${_id} was found but could not be updated.`,
+        error
       );
       return res.status(500).send(ERROR_MESSAGE);
     });

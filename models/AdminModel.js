@@ -2,11 +2,9 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 
 const Admin = mongoose.Schema({
-  adminId: {
+  id: {
     type: mongoose.Types.ObjectId,
-    requied: true,
     unique: true,
-    // default: new mongoose.ObjectId(),
   },
   email: {
     type: String,

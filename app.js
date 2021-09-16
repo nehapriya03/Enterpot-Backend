@@ -6,10 +6,12 @@ require("dotenv").config();
 const app = express();
 
 const adminRoutes = require("./routes/AdminRoutes");
+const userRoutes = require("./routes/UserRoute");
 
 app.use(morgan("dev"));
 app.use(express.json());
 app.use("/admin", adminRoutes);
+app.use("/user", userRoutes);
 
 mongoose
   .connect(envData.DB, { useUnifiedTopology: true, useNewUrlParser: true })
