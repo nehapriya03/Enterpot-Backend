@@ -1,9 +1,9 @@
 const userRepository = require("../repository/UserRepository");
 const User = require("../models/UserModel");
-// const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { Mongoose } = require("mongoose");
-// const envData = process.env;
+// const { Mongoose } = require("mongoose");
+const envData = process.env;
 
 const ERROR_MESSAGE = "An internal server error occured.";
 
@@ -243,4 +243,39 @@ exports.updateUserById = async (req, res) => {
       console.error(`An internal serber error occured`, error);
       return res.status(500).send(ERROR_MESSAGE);
     });
+};
+
+exports.userLogin = async (req, res) => {
+  let { email, password } = req.body;
+  await userRepository.getUserByEmail(email).then((userFound) => {
+    if (userFound === null) {
+      console.error(`No user with email: ${email} has been found.`);
+      return res
+        .status(404)
+        .send(`No user with email: ${email} has been found.`);
+    }
+
+    bcrypt
+      .compare(password, userFound.password)
+      .then((matches) => {
+        if (matches) {
+          const token = jwt.sign(
+            {
+              email: userFound.email,
+              password: userFound.password,
+            },
+            envData.JWT_SECRETKEY,
+            {
+              expiresIn: "1h",
+            }
+          );
+          console.log(`Login sucessfull`, token);
+          return res.status(200).send(`Login sucessfull`);
+        }
+      })
+      .catch((error) => {
+        console.error(`Incorrect credentila`);
+        return res.status(400).send(`Incorrect credentials.`);
+      });
+  });
 };

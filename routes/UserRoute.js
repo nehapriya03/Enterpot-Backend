@@ -8,6 +8,7 @@ router.post(
   express.text(),
   userController.getUsersByBusinessNameSearch
 );
+router.post("/login", userController.userLogin);
 router.put("/:id", userController.updateUserById);
 // router.get("/all", userController.getAllUsers);
 // router.get("/:id", userController.getUserById);
