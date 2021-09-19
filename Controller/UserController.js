@@ -17,42 +17,49 @@ exports.addUser = async (req, res) => {
     businessName,
     address,
   } = req.body;
-  await userRepository.getUserByEmail(email).then(async (results) => {
-    if (results !== null) {
-      console.error(`An user with email id: ${email} already exists.`);
-      return res
-        .status(409)
-        .send(`An user with email id: ${email} already exists.`);
-    }
-    bcrypt.hash(password, 12, async (error, hash) => {
-      if (error) {
-        console.error("There was an issue while encrpting the password.");
+  await userRepository
+    .getUserByEmail(email)
+    .then(async (results) => {
+      if (results !== null) {
+        console.error(`An user with email id: ${email} already exists.`);
+        return res
+          .status(409)
+          .send(`An user with email id: ${email} already exists.`);
       }
-      password = hash;
+      bcrypt.hash(password, 12, async (error, hash) => {
+        if (error) {
+          console.error("There was an issue while encrpting the password.");
+        }
+        password = hash;
 
-      const user = new User({
-        firstName,
-        lastName,
-        email,
-        password,
-        phoneNumber,
-        businessName,
-        address,
-      });
-
-      await userRepository
-        .addUser(user)
-        .then((addedUser) => {
-          console.info(
-            `User with email: ${email} has been addedd sucessfully.`
-          );
-          return res.status(200).json(addedUser);
-        })
-        .catch((error) => {
-          console.error(`There was an error while adding the user`, error);
+        const user = new User({
+          firstName,
+          lastName,
+          email,
+          password,
+          phoneNumber,
+          businessName,
+          address,
         });
+
+        await userRepository
+          .addUser(user)
+          .then((addedUser) => {
+            console.info(
+              `User with email: ${email} has been addedd sucessfully.`
+            );
+            return res.status(200).json(addedUser);
+          })
+          .catch((error) => {
+            console.error(`There was an error while adding the user`, error);
+            return res.status(500).send(ERROR_MESSAGE);
+          });
+      });
+    })
+    .catch((error) => {
+      console.error(`User with email: ${email} does not exists.`, error);
+      res.status(404).send(`User with email: ${email} does not exists.`);
     });
-  });
 };
 
 exports.getUserById = async (req, res) => {

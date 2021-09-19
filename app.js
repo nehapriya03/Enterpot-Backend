@@ -7,11 +7,13 @@ const app = express();
 
 const adminRoutes = require("./routes/AdminRoutes");
 const userRoutes = require("./routes/UserRoute");
+const salesPerson = require("./routes/SalesPersonRoute");
 
 app.use(morgan("dev"));
 app.use(express.json());
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
+app.use("/salesperson", salesPerson);
 
 mongoose
   .connect(envData.DB, { useUnifiedTopology: true, useNewUrlParser: true })
