@@ -279,10 +279,12 @@ exports.userLogin = async (req, res) => {
           console.log(`Login sucessfull`, token);
           return res.status(200).send(`Login sucessfull`);
         }
+        console.error(`Incorrect credentials.`);
+        return res.status(400).send(`Incorrect credentials.`);
       })
       .catch((error) => {
-        console.error(`Incorrect credentila`);
-        return res.status(400).send(`Incorrect credentials.`);
+        console.error(`Some error occured in logging in`, error);
+        return res.status(400).send(ERROR_MESSAGE);
       });
   });
 };

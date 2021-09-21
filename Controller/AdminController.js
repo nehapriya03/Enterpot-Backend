@@ -183,31 +183,37 @@ exports.updateAdminById = async (req, res) => {
 
 exports.adminLogin = async (req, res) => {
   let { email, password } = req.body;
-  await adminRepository.getAdminByEmail(email).then((adminFound) => {
-    if (adminFound === null) {
-      console.error(`No admin with email: ${email} has been found.}`);
-      return res
-        .status(404)
-        .send(`No admin with email: ${email} has been found.}`);
-    }
-
-    bcrypt.compare(password, adminFound.password).then((matches) => {
-      if (matches) {
-        const token = jwt.sign(
-          {
-            email: adminFound.email,
-            password: adminFound.password,
-          },
-          envData.JWT_SECRETKEY,
-          {
-            expiresIn: "1h",
-          }
-        );
-        console.info(`Login sucessfull.`);
-        return res.status(200).json({ adminFound, token });
+  await adminRepository
+    .getAdminByEmail(email)
+    .then((adminFound) => {
+      if (adminFound === null) {
+        console.error(`No admin with email: ${email} has been found.}`);
+        return res
+          .status(404)
+          .send(`No admin with email: ${email} has been found.}`);
       }
-      console.warn("Incorrect credentials");
-      return res.status(400).send(`Incorrect credentials.`);
+
+      bcrypt.compare(password, adminFound.password).then((matches) => {
+        if (matches) {
+          const token = jwt.sign(
+            {
+              email: adminFound.email,
+              password: adminFound.password,
+            },
+            envData.JWT_SECRETKEY,
+            {
+              expiresIn: "1h",
+            }
+          );
+          console.info(`Login sucessfull.`);
+          return res.status(200).json({ adminFound, token });
+        }
+        console.warn("Incorrect credentials");
+        return res.status(400).send(`Incorrect credentials.`);
+      });
+    })
+    .catch((error) => {
+      console.error(`There was some error while logging`, error);
+      return res.status(400).send(ERROR_MESSAGE);
     });
-  });
 };

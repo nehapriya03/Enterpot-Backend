@@ -236,10 +236,12 @@ exports.salespersonLogin = async (req, res) => {
             console.log(`Login sucessfull`, token);
             return res.status(200).send(`Login sucessfull`);
           }
+          console.error(`Incorrect credentils`);
+          return res.status(400).send(`Incorrect credentials.`);
         })
         .catch((error) => {
-          console.error(`Incorrect credentils`, error);
-          return res.status(400).send(`Incorrect credentials.`);
+          console.error(`There was some error while logging`, error);
+          return res.status(400).send(ERROR_MESSAGE);
         });
     });
 };
