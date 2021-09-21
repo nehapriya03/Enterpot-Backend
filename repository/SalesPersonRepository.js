@@ -31,9 +31,12 @@ exports.getSalesPersonByEmail = async (email) => {
   }
 };
 
-exports.updateSalesPerson = async (id) => {
+exports.updateSalesPersonById = async (salesPerson) => {
   try {
-    return await SalesPerson.updateOne({ _id: id });
+    return await SalesPerson.updateOne(
+      { _id: salesPerson._id },
+      { $set: salesPerson }
+    );
   } catch (error) {
     console.error(error);
     throw error;

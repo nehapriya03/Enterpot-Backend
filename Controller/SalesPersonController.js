@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const salesPersonRepository = require("../repository/SalesPersonRepository");
 const SalesPerson = require("../models/SalesPersonModel");
 const bcrypt = require("bcrypt");
+const envData = process.env;
 
 const ERROR_MESSAGE = "An Internal server error occured.";
 
@@ -127,5 +128,118 @@ exports.getSalespersonByEmail = async (req, res) => {
         error
       );
       return res.status(500).send(ERROR_MESSAGE);
+    });
+};
+
+exports.updateSalespersonById = async (req, res) => {
+  let { id: pathId } = req.params;
+  let { _id, name, email, password, phoneNumber, isActive, addedDate } =
+    req.body;
+
+  if (pathId !== _id) {
+    console.log(`Id in the path and body must be same.`);
+    return res.status(400).send(`Id in the path and body must be same.`);
+  }
+
+  let salesPerson = new SalesPerson({
+    _id,
+    name,
+    email,
+    password,
+    phoneNumber,
+    isActive,
+    // addedDate,
+  });
+
+  await salesPersonRepository
+    .getSalesPersonById(_id)
+    .then(async (foundSalesPerson) => {
+      if (foundSalesPerson === null) {
+        console.warn(
+          `Salesperson with id ${_id} does not exists in the database.`
+        );
+        return res
+          .status(404)
+          .send(`Salesperson with id ${_id} does not exists in the database.`);
+      }
+      bcrypt.hash(password, 12, async (error, hash) => {
+        if (error) {
+          console.error(`There was an error while encrypting the password.`);
+        }
+        salesPerson.password = hash;
+
+        await salesPersonRepository
+          .updateSalesPersonById(salesPerson)
+          .then((updatedSalesPerson) => {
+            if (updatedSalesPerson.n === 0) {
+              console.error(
+                `Update Failed: salesperson with Id: ${_id} does not exists`
+              );
+              return res
+                .status(400)
+                .send(
+                  `Update Failed: salesperson with id: ${_id} does not exists`
+                );
+            }
+            console.info(
+              `salesperson with id: ${_id} has been sucessfuly updated.`
+            );
+            return res
+              .status(200)
+              .send(`salesperson with id: ${_id} has been sucessfuly updated.`);
+          })
+          .catch((error) => {
+            console.error(
+              `There was an error while updating the salesperson with id: ${_id}.`,
+              error
+            );
+            return res
+              .status(500)
+              .send(
+                `There was an error while updating the salesperson with id: ${_id}.`
+              );
+          });
+      });
+    })
+    .catch((error) => {
+      console.error(`An internal server error occured`, error);
+      return res.status(500).send(ERROR_MESSAGE);
+    });
+};
+
+exports.salespersonLogin = async (req, res) => {
+  let { email, password } = req.body;
+  await salesPersonRepository
+    .getSalesPersonByEmail(email)
+    .then((salespersonFound) => {
+      if (salespersonFound === null) {
+        console.error(`No salesperson with email: ${email} has been found.`);
+        return res
+          .status(404)
+          .send(`No salesperson with email: ${email} has been found.`);
+      }
+
+      bcrypt
+        .compare(password, salespersonFound.password)
+        .then((matches) => {
+          if (matches) {
+            const token = jwt.sign(
+              {
+                email: salespersonFound.email,
+                password: salespersonFound.password,
+              },
+              envData.JWT_SECRETKEY,
+              {
+                expiresIn: "1h",
+              }
+            );
+            console.log(`Login sucessfull`, token);
+            return res.status(200).send(`Login sucessfull`);
+          }
+        })
+        .catch((error) => {
+          console.error(`Incorrect credentils`, error);
+          return res.status(400).send(`Incorrect credentials.`);
+        });
     });
 };
