@@ -6,7 +6,7 @@ const envData = process.env;
 
 const ERROR_MESSAGE = "An Internal server error occured.";
 
-exports.addUser = async (req, res) => {
+exports.addSalesPerson = async (req, res) => {
   let { name, email, password, phoneNumber, isActive, addedDate } = req.body;
   await salesPersonRepository
     .getSalesPersonByEmail(email)
@@ -133,8 +133,7 @@ exports.getSalespersonByEmail = async (req, res) => {
 
 exports.updateSalespersonById = async (req, res) => {
   let { id: pathId } = req.params;
-  let { _id, name, email, password, phoneNumber, isActive, addedDate } =
-    req.body;
+  let { _id, name, email, password, phoneNumber, isActive } = req.body;
 
   if (pathId !== _id) {
     console.log(`Id in the path and body must be same.`);

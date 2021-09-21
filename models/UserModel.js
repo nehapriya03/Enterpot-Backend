@@ -17,7 +17,7 @@ const User = mongoose.Schema({
   email: {
     type: String,
     required: true,
-    validator(value) {
+    validate(value) {
       if (!validator.isEmail(value)) {
         throw new Error("Please enter a valid email.");
       }
