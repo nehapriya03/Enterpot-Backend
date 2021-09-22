@@ -1,12 +1,12 @@
-const ProductModel = require("../models/ProductModel");
+const productModel = require("../models/ProductModel");
 
 exports.addProduct = async (product) => {
-  return await ProductModel.save();
+  return await product.save();
 };
 
 exports.getProductById = async (id) => {
   try {
-    return await ProductModel.findOne({ _id: id });
+    return await productModel.findOne({ _id: id });
   } catch (error) {
     console.error(error);
     throw error;
@@ -15,7 +15,7 @@ exports.getProductById = async (id) => {
 
 exports.getAllProducts = async () => {
   try {
-    return await ProductModel.find({});
+    return await productModel.find({});
   } catch (error) {
     console.error(error);
     throw error;
@@ -24,7 +24,7 @@ exports.getAllProducts = async () => {
 
 exports.getProductsByBrandId = async (brandId) => {
   try {
-    return await ProductModel.findOne({ brandId });
+    return await productModel.findOne({ brandId });
   } catch (error) {
     console.error(error);
     throw error;
@@ -33,7 +33,7 @@ exports.getProductsByBrandId = async (brandId) => {
 
 exports.getProductsByNameRegex = async (name) => {
   try {
-    return await ProductModel.find({
+    return await productModel.find({
       name: { $regex: new RegExp(name), $options: "i" },
     });
   } catch (error) {
@@ -44,9 +44,11 @@ exports.getProductsByNameRegex = async (name) => {
 
 exports.getProductsByNameIndexSearch = async (name) => {
   try {
-    return await ProductModel.find({
-      $text: { $search: name, $caseSensitive: false },
-    }).sort({ score: { $meta: "textScore" } });
+    return await productModel
+      .find({
+        $text: { $search: name, $caseSensitive: false },
+      })
+      .sort({ score: { $meta: "textScore" } });
   } catch (error) {
     console.error(error);
     throw error;
@@ -55,7 +57,7 @@ exports.getProductsByNameIndexSearch = async (name) => {
 
 exports.updateProductById = async (product) => {
   try {
-    return await ProductModel.updateOne(
+    return await productModel.updateOne(
       { _id: product._id },
       { $set: product }
     );
@@ -65,7 +67,20 @@ exports.updateProductById = async (product) => {
   }
 };
 
-//TODO - upload ProductImage
-//TODO- delete ProductImage.
-//TODO - getProductsCountByBrandId
-//TODO - getProductCountByCategoryId
+exports.getProductCountByBrandId = async (brandId) => {
+  try {
+    return await productModel.countDocuments({ brandId });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+exports.getProductCountByCategoryId = async (categoryId) => {
+  try {
+    return await productModel.countDocuments({ categoryIdList: categoryId });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

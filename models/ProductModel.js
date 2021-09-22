@@ -52,7 +52,7 @@ const Product = mongoose.Schema({
   priceAfterTax: {
     type: doubleTypes.Double,
     default: function () {
-      this.priceAfterTax = this.price * (10 + this.gstSlab / 100);
+      this.priceAfterTax = this.price * (1 + this.gst / 100);
     },
   },
 });

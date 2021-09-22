@@ -1,5 +1,7 @@
 const productRepository = require("../repository/ProductRepository");
 const ProductModel = require("../models/ProductModel");
+var multer = require("multer");
+const s3ServiceLayer = require("../Services/S3Service");
 
 const ERROR_MESSAGE = "An Internal Server Error";
 
@@ -30,7 +32,7 @@ exports.addProduct = async (req, res) => {
     .addProduct(product)
     .then((addedProduct) => {
       console.info(`Product with name ${name} has been sucessfully added.`);
-      return res.send(200).json(addedProduct);
+      return res.status(200).json(addedProduct);
     })
     .catch((error) => {
       console.error(
@@ -80,7 +82,28 @@ exports.getAllProducts = async (req, res) => {
     });
 };
 
-//TODO-- getProductByBrandId
+exports.getProductsByBrandId = async (req, res) => {
+  const { brandId } = req.params;
+  await productRepository
+    .getProductsByBrandId(brandId)
+    .then((productFound) => {
+      if (productFound === null) {
+        console.error(`No product with brandId: ${brandId} was found.`);
+        return res
+          .status(404)
+          .send(`No product with brandId: ${brandId} was found.`);
+      }
+      console.log(`Product with brandId: ${brandId} was sucessfully found.`);
+      return res.status(200).json(productFound);
+    })
+    .catch((error) => {
+      console.error(
+        `There was an error in finding the product with brandId: ${brandId}.`,
+        error
+      );
+      return res.status(500).send(ERROR_MESSAGE);
+    });
+};
 
 const getProductsByNameRegex = async (req, res) => {
   await productRepository
@@ -199,6 +222,69 @@ exports.updateProductById = async (req, res) => {
   });
 };
 
-//TODO - getProductsCountByBrandId
+// exports.uploadProductImage = async (req, res) => {
+//   await s3ServiceLayer.fileUploadToS3(req, res).then((imageUploaded) => {
+//     console.info(`Image`);
+//   });
+// };
 
-//TODO - getProductCountByCategoryId
+//TODO - uploadProductImage
+// TODO - deleteProductImage
+
+exports.getProductsCountsByBrandId = async (req, res) => {
+  let { brandId } = req.params;
+  await productRepository
+    .getProductCountByBrandId(brandId)
+    .then((results) => {
+      if (results === 0) {
+        console.log(
+          `There is no document present in database with brandId : ${brandId}.`
+        );
+        return res
+          .send(404)
+          .send(
+            `There is no document present in database with brandId : ${brandId}.`
+          );
+      }
+      console.info(
+        `There are ${results} documents present in the database with brandId: ${brandId}.`
+      );
+      return res.status(200).send(results);
+    })
+    .catch((error) => {
+      console.error(
+        `There was some error occured in fetching the counts`,
+        error
+      );
+      return res.status(500).send(ERROR_MESSAGE);
+    });
+};
+
+exports.getProductsCountsByCategoryId = async (req, res) => {
+  let { categoryId } = req.params;
+  await productRepository
+    .getProductCountByCategoryId(categoryId)
+    .then((results) => {
+      if (results === 0) {
+        console.log(
+          `There is no document present in database with categoryId : ${categoryId}.`
+        );
+        return res
+          .send(404)
+          .send(
+            `There is no document present in database with categoryId : ${categoryId}.`
+          );
+      }
+      console.info(
+        `There are ${results} documents present in the database with categoryId: ${categoryId}.`
+      );
+      return res.status(200).send(results);
+    })
+    .catch((error) => {
+      console.error(
+        `There was some error occured in fetching the counts`,
+        error
+      );
+      return res.status(500).send(ERROR_MESSAGE);
+    });
+};
