@@ -222,20 +222,25 @@ exports.updateProductById = async (req, res) => {
 };
 
 exports.uploadProductImage = async (req, res) => {
-  const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `/${req.file.originalname}`,
-    // Key: `/${Date.now()}_${req.file.originalname}`,
-    Body: req.file.buffer,
-  };
-  s3ServiceLayer.s3.upload(params, (error, data) => {
-    if (error) {
-      console.error();
-      throw new Error(`There was some issue in uploading the image to s3.`);
-    }
-    console.info();
-    return res.status(200).send(data);
-  });
+  try {
+    s3ServiceLayer
+      .fileUploadToS3(req, res)
+      .then((results) => {
+        console.info(`Upload image to s3 bucket was sucessfull.`);
+        return res
+          .status(200)
+          .send(`Upload image to s3 bucket was sucessfull.`);
+      })
+      .catch((error) => {
+        console.error(`There was an error while uploading the picture`, error);
+        return res
+          .status(400)
+          .send(`There was an error while uploading the picture`);
+      });
+  } catch (error) {
+    console.error(`There was an error while uploading the image.`, error);
+    return res.send(500).send(ERROR_MESSAGE);
+  }
 };
 
 exports.deleteProductImage = async (req, res) => {
@@ -244,36 +249,33 @@ exports.deleteProductImage = async (req, res) => {
     "https://enterpotproductimage.s3.us-east-2.amazonaws.com//",
     ""
   );
-  // var objectPath = `${process.env.AWS_BUCKET_NAME}//${objectName}/`;
-  var objectPath = `/${objectName}`;
+  var objectKeyPath = `/${objectName}`;
   try {
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `${objectPath}`,
+      Key: `${objectKeyPath}`,
     };
-    s3ServiceLayer.s3.deleteObject(params, function (err, data) {
-      if (err) console.log(err);
-      // error
-      else console.log(data);
-      return res.status(200).send(data); // deleted
+    s3ServiceLayer.deleteObject(params, function (error, data) {
+      if (error) {
+        console.log(
+          `There was an error in deleting the image with name: ${objectKeyPath} from s3`,
+          error
+        );
+
+        return res
+          .status(500)
+          .send(
+            `There was an error in deleting the image with name: ${objectKeyPath} from s3`
+          );
+      }
+      console.log(data);
+      return res.status(200).send(data);
     });
   } catch (error) {
-    console.error(`There was an error while decosing the url`);
+    console.error(`There was an error while deleting the image.`, error);
+    return res.send(500).send(ERROR_MESSAGE);
   }
-
-  // const objectPath = `${process.env.AWS_BUCKET_NAME}/${objectUrl}`;
-
-  // const params = { Bucket: process.env.AWS_BUCKET_NAME, Key: `${objectPath}` };
-
-  // s3ServiceLayer.s3.deleteObject(params, function (err, data) {
-  //   if (err) console.log(err);
-  //   // error
-  //   else console.log(data);
-  //   return res.status(200).send(data); // deleted
-  // });
 };
-
-// TODO - deleteProductImage
 
 exports.getProductsCountsByBrandId = async (req, res) => {
   let { brandId } = req.params;
