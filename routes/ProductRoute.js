@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const productController = require("../Controller/ProductController");
-const multer = require("multer");
 const s3Service = require("../Services/S3Service");
 
 router.post("", productController.addProduct);
 router.post("/upload", s3Service.upload, (req, res) => {
-  s3Service.fileUploadToS3(req, res);
+  productController.uploadProductImage(req, res);
   // return res.status(200).send();
 });
 

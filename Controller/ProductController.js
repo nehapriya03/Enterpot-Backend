@@ -1,6 +1,5 @@
 const productRepository = require("../repository/ProductRepository");
 const ProductModel = require("../models/ProductModel");
-var multer = require("multer");
 const s3ServiceLayer = require("../Services/S3Service");
 
 const ERROR_MESSAGE = "An Internal Server Error";
@@ -222,10 +221,21 @@ exports.updateProductById = async (req, res) => {
   });
 };
 
-// exports.uploadProductImage = async (req, res) => {
-//   await s3ServiceLayer.fileUploadToS3(req, res).then((imageUploaded) => {
-//     console.info(`Image`);
-//   });
+exports.uploadProductImage = async (req, res) => {
+  const params = {
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: `/${Date.now()}_${req.file.originalname}`,
+    Body: req.file.buffer,
+  };
+  s3ServiceLayer.s3.upload(params, (error, data) => {
+    if (error) {
+      console.error();
+      throw new Error(`There was some issue in uploading the image to s3.`);
+    }
+    console.info();
+    return res.status(200).send(data);
+  });
+};
 // };
 
 //TODO - uploadProductImage
