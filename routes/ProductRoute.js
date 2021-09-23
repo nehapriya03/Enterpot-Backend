@@ -9,6 +9,10 @@ router.post("/upload", s3Service.upload, (req, res) => {
   // return res.status(200).send();
 });
 
+router.delete("/delete", (req, res) => {
+  productController.deleteProductImage(req, res);
+});
+
 // router.get("/all", productController.getAllProducts);
 // router.get("/:id", productController.getProductById);
 // router.get("/brand/:brandId", productController.getProductByBrandId);

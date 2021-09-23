@@ -224,7 +224,8 @@ exports.updateProductById = async (req, res) => {
 exports.uploadProductImage = async (req, res) => {
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `/${Date.now()}_${req.file.originalname}`,
+    Key: `/${req.file.originalname}`,
+    // Key: `/${Date.now()}_${req.file.originalname}`,
     Body: req.file.buffer,
   };
   s3ServiceLayer.s3.upload(params, (error, data) => {
@@ -236,9 +237,42 @@ exports.uploadProductImage = async (req, res) => {
     return res.status(200).send(data);
   });
 };
-// };
 
-//TODO - uploadProductImage
+exports.deleteProductImage = async (req, res) => {
+  var { url } = req.query;
+  var objectName = url.replace(
+    "https://enterpotproductimage.s3.us-east-2.amazonaws.com//",
+    ""
+  );
+  // var objectPath = `${process.env.AWS_BUCKET_NAME}//${objectName}/`;
+  var objectPath = `/${objectName}`;
+  try {
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `${objectPath}`,
+    };
+    s3ServiceLayer.s3.deleteObject(params, function (err, data) {
+      if (err) console.log(err);
+      // error
+      else console.log(data);
+      return res.status(200).send(data); // deleted
+    });
+  } catch (error) {
+    console.error(`There was an error while decosing the url`);
+  }
+
+  // const objectPath = `${process.env.AWS_BUCKET_NAME}/${objectUrl}`;
+
+  // const params = { Bucket: process.env.AWS_BUCKET_NAME, Key: `${objectPath}` };
+
+  // s3ServiceLayer.s3.deleteObject(params, function (err, data) {
+  //   if (err) console.log(err);
+  //   // error
+  //   else console.log(data);
+  //   return res.status(200).send(data); // deleted
+  // });
+};
+
 // TODO - deleteProductImage
 
 exports.getProductsCountsByBrandId = async (req, res) => {

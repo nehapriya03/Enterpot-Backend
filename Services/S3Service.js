@@ -20,3 +20,10 @@ AWS.config.update({
   accessKeyId: accessKeyId,
   secretAccessKey: secretAccessKey,
 });
+
+// var params = {  Bucket: 'your bucket', Key: 'your object' };
+
+// exports.s3.deleteObject(params, function(err, data) {
+//   if (err) console.log(err, err.stack);  // error
+//   else     console.log();                 // deleted
+// });
