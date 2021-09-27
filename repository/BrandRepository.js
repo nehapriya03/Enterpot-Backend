@@ -81,7 +81,8 @@ exports.getAllBrands = async () => {
 
 exports.updateBrand = async (brand) => {
   try {
-    return await brandModel.updateOne({ _id: brand.id }, { $set: brand });
+    console.log(brand.id);
+    return await brandModel.updateOne({ _id: brand._id }, { $set: brand });
   } catch (error) {
     console.error(error);
     throw error;

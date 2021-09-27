@@ -76,7 +76,7 @@ exports.updateBrand = async (req, res) => {
   });
 
   await brandRepository
-    .getBrandById(brand)
+    .getBrandById(pathId)
     .then(async (bradFound) => {
       if (bradFound === null) {
         console.error(`No brand with brandId: ${_id} exists in the database.`);
@@ -85,7 +85,7 @@ exports.updateBrand = async (req, res) => {
           .send(`No brand with brandId: ${_id} exists in the database.`);
       }
 
-      await brandRepository.updateBrand(_id).then((updatedBrand) => {
+      await brandRepository.updateBrand(brand).then((updatedBrand) => {
         if (updatedBrand.n === 0) {
           console.error(`Update Failed: No brand with brandId: ${_id} exists.`);
           return res
@@ -93,7 +93,9 @@ exports.updateBrand = async (req, res) => {
             .send(`Update Failed: No brand with brandId: ${_id} exists.`);
         }
         console.info(`Brand with id: ${_id} has been sucessfuly updated.`);
-        return res.status(200).json(updatedBrand);
+        return res
+          .status(200)
+          .json(`Brand with id: ${_id} has been sucessfuly updated.`);
       });
     })
     .catch((error) => {
