@@ -35,7 +35,25 @@ exports.getBrandById = async (brandId) => {
 };
 exports.getAllBrand = async () => {
   try {
-  } catch {}
+    return await BrandModel.aggregate([
+      {
+        $lookup: {
+          from: "products",
+          localField: "_id",
+          foreignField: "brandId",
+          as: "productList",
+        },
+      },
+      {
+        $set: {
+          count: { $size: "$productList" },
+        },
+      },
+    ]);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 exports.getAllBrands = async () => {

@@ -44,7 +44,7 @@ exports.getAllBrands = async (req, res) => {
   await brandRepository
     .getAllBrand()
     .then((brandFound) => {
-      if (brandFound === null) {
+      if (brandFound.length === 0) {
         console.info(`There is no brand present in the database.`);
         return res
           .status(404)
