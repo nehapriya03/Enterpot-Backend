@@ -9,6 +9,7 @@ const adminRoutes = require("./routes/AdminRoutes");
 const userRoutes = require("./routes/UserRoute");
 const salesPerson = require("./routes/SalesPersonRoute");
 const product = require("./routes/ProductRoute");
+const brand = require("./routes/BrandRoute");
 
 app.use(morgan("dev"));
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 app.use("/salesperson", salesPerson);
 app.use("/product", product);
+app.use("/brand", brand);
 
 mongoose
   .connect(envData.DB, { useUnifiedTopology: true, useNewUrlParser: true })

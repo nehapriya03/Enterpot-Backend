@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Brand = mongoose.Schema({
   id: {
-    type: mongoose.Types.Schema,
+    type: mongoose.Types.ObjectId,
     unique: true,
   },
   name: {
