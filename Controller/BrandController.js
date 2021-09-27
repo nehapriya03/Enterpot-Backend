@@ -105,8 +105,26 @@ exports.updateBrand = async (req, res) => {
 
     .catch((error) => {
       console.error(
-        `There was an error in fetching the barnd with brabdId: ${_id} from database.`
+        `There was an error in fetching the barnd with brabdId: ${_id} from database.`,
+        error
       );
+      return res.status(500).send(ERROR_MESSAGE);
+    });
+};
+
+exports.getAllBrandsSimple = async (req, res) => {
+  await brandRepository
+    .getAllBrandSimple()
+    .then((brandFound) => {
+      if (brandFound === 0) {
+        console.info(`No brand present in the database.`);
+        return res.status(404).send(`No brand present in the database.`);
+      }
+      console.info(`All brand has been succesffuly found.`);
+      return res.status(200).send(brandFound);
+    })
+    .catch((error) => {
+      console.error(`There was an error`, error);
       return res.status(500).send(ERROR_MESSAGE);
     });
 };
