@@ -1,6 +1,6 @@
 const brandModel = require("../models/BrandModel");
 // const productController = require("../Controller/ProductController");
-const BrandModel = require("../models/BrandModel");
+// const BrandModel = require("../models/BrandModel");
 const mongoose = require("mongoose");
 
 exports.addBrand = async (brand) => {
@@ -9,7 +9,7 @@ exports.addBrand = async (brand) => {
 
 exports.getBrandById = async (brandId) => {
   try {
-    return await BrandModel.aggregate([
+    return await brandModel.aggregate([
       {
         $match: { _id: mongoose.Types.ObjectId(brandId) },
       },
@@ -35,7 +35,7 @@ exports.getBrandById = async (brandId) => {
 };
 exports.getAllBrand = async () => {
   try {
-    return await BrandModel.aggregate([
+    return await brandModel.aggregate([
       {
         $lookup: {
           from: "products",

@@ -1,5 +1,6 @@
 const brandRepository = require("../repository/BrandRepository");
 const brandModel = require("../models/BrandModel");
+const productRepository = require("../repository/ProductRepository");
 
 const ERROR_MESSAGE = "An internal server error occured.";
 
@@ -127,4 +128,71 @@ exports.getAllBrandsSimple = async (req, res) => {
       console.error(`There was an error`, error);
       return res.status(500).send(ERROR_MESSAGE);
     });
+};
+
+exports.deleteBrandById = async (req, res, next) => {
+  try {
+    let id = req.params.id;
+
+    await brandRepository
+      .getAllBrandSimple(id)
+      .then(async (brandFound) => {
+        if (brandFound === null) {
+          console.error(`Brand with doctorId: ${id} does not exists.`);
+          return res
+            .send(404)
+            .send(`Brand with doctorId: ${id} does not exists.`);
+        }
+        await productRepository
+          .getProductCountByBrandId(id)
+          .then(async (productFound) => {
+            if (productFound !== 0) {
+              console.error(
+                `Delete Failed! There are products that are currently using the brand with id: ${id}`
+              );
+              res
+                .status(200)
+                .send(
+                  `Delete Failed! There are products that are currently using the brand with id: ${id}`
+                );
+            }
+
+            await brandRepository
+              .deleteBrandById(id)
+              .then((brandDeleted) => {
+                if (brandDeleted.deletedCount > 0) {
+                  console.log(
+                    `Brand with id: ${id} has been sucessfully deleted.`
+                  );
+                  return res
+                    .status(200)
+                    .send(`Brand with id: ${id} has been sucessfully deleted.`);
+                }
+              })
+              .catch((error) => {
+                console.error(
+                  `There was an error while deleting the brad with Id: ${id}`,
+                  error
+                );
+                return res.status(500).send(ERROR_MESSAGE);
+              });
+          })
+          .catch((error) => {
+            console.error(
+              `There was an error in finding the product with brandId: ${id}`,
+              error
+            );
+            return res.status(500).send(ERROR_MESSAGE);
+          });
+      })
+      .catch((error) => {
+        console.error(
+          `There was an error in finding the brand with brandId: ${id}.`,
+          error
+        );
+      });
+  } catch (error) {
+    console.error(`There was an error in deleting the brand`, error);
+    return res.status(500).send(ERROR_MESSAGE);
+  }
 };

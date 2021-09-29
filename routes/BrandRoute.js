@@ -7,5 +7,6 @@ const brandController = require("../Controller/BrandController");
 router.get("/all-simple", brandController.getAllBrandsSimple);
 // router.put("/:id", brandController.updateBrand);
 // router.get("/:brandId", brandController.getBrandById);
+router.delete("/:id", brandController.deleteBrandById);
 
 module.exports = router;
