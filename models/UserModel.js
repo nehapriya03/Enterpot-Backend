@@ -8,11 +8,11 @@ const User = mongoose.Schema({
   },
   firstName: {
     type: String,
-    required: true,
+    required: [true, "Enter first name"],
   },
   lastName: {
     type: String,
-    required: true,
+    required: [true, "Enter last name"],
   },
   email: {
     type: String,
@@ -37,16 +37,16 @@ const User = mongoose.Schema({
 
   phoneNumber: {
     type: Number,
-    required: true,
+    required: [true, "Enter phone number"],
   },
 
   businessName: {
     type: String,
-    required: true,
+    required: [true, "Enter business name"],
   },
   address: {
     type: String,
-    required: true,
+    required: [true, "Enter address"],
   },
 });
 

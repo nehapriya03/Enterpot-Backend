@@ -8,7 +8,7 @@ const SalesPerson = mongoose.Schema({
   },
   name: {
     type: String,
-    required: true,
+    required: [true, "Enter name"],
   },
   email: {
     type: String,
@@ -23,10 +23,16 @@ const SalesPerson = mongoose.Schema({
   password: {
     type: String,
     required: true,
+    minLength: 7,
+    validate(value) {
+      if (value.minLength < 7) {
+        throw new Error("Password must be atleast 7 character long.");
+      }
+    },
   },
   phoneNumber: {
     type: Number,
-    required: true,
+    required: [true, "enter phone number"],
   },
   isActive: {
     type: Boolean,

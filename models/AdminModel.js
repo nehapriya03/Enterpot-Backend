@@ -9,7 +9,7 @@ const Admin = mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+    required: [true, "Please enter email address."],
     validate(value) {
       if (!validator.isEmail(value)) {
         throw new Error("Email is invalid");
@@ -19,7 +19,7 @@ const Admin = mongoose.Schema({
 
   password: {
     type: String,
-    required: true,
+    required: [true, "Please enter password."],
     minLength: 7,
     validate(value) {
       if (value.minLength < 7) {
