@@ -52,7 +52,7 @@ exports.addUser = async (req, res) => {
           })
           .catch((error) => {
             console.error(`There was an error while adding the user`, error);
-            return res.status(500).send(ERROR_MESSAGE);
+            return res.status(500).send(error.message);
           });
       });
     })

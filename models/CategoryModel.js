@@ -7,8 +7,8 @@ const Category = mongoose.Schema({
   },
   name: {
     type: String,
-    required: true,
+    required: [true, "Please enter a Brand name."],
   },
 });
 
-module.exports = Category;
+module.exports = mongoose.model("Category", Category);

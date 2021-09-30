@@ -38,7 +38,7 @@ exports.addProduct = async (req, res) => {
         `There was an error while adding the product to the database.`,
         error
       );
-      return res.status(500).send(ERROR_MESSAGE);
+      return res.status(500).send(error.message);
     });
 };
 

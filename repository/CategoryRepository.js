@@ -32,7 +32,7 @@ exports.getCategoryById = async (categoryId) => {
   }
 };
 
-exports.getAllCategorie = async () => {
+exports.getAllCategories = async () => {
   try {
     return await categoryModel.aggregate([
       {

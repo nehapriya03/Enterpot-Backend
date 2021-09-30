@@ -16,7 +16,7 @@ exports.addBrand = async (req, res) => {
     })
     .catch((error) => {
       console.error(`There was an error while adding the brand.`, error);
-      return res.status(500).send(ERROR_MESSAGE);
+      return res.status(500).send(error.message);
     });
 };
 
@@ -151,7 +151,7 @@ exports.deleteBrandById = async (req, res, next) => {
                 `Delete Failed! There are products that are currently using the brand with id: ${id}`
               );
               res
-                .status(200)
+                .status(400)
                 .send(
                   `Delete Failed! There are products that are currently using the brand with id: ${id}`
                 );
@@ -168,6 +168,10 @@ exports.deleteBrandById = async (req, res, next) => {
                     .status(200)
                     .send(`Brand with id: ${id} has been sucessfully deleted.`);
                 }
+                console.info(`Brand with brandId: ${id} has not been deleted.`);
+                return res
+                  .status(400)
+                  .send(`Brand with brandId: ${id} has not been deleted.`);
               })
               .catch((error) => {
                 console.error(
