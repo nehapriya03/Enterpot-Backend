@@ -47,7 +47,7 @@ exports.getProductById = async (req, res) => {
   await productRepository
     .getProductById(id)
     .then((productFound) => {
-      if (productFound === null) {
+      if (productFound.length === 0) {
         console.error(`No product with Id: ${id} has been found.`);
         return res.staus(404).send(`No product with Id: ${id} has been found.`);
       }

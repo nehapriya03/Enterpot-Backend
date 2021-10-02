@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const productModel = require("../models/ProductModel");
 
 exports.addProduct = async (product) => {
@@ -6,7 +7,45 @@ exports.addProduct = async (product) => {
 
 exports.getProductById = async (id) => {
   try {
-    return await productModel.findOne({ _id: id });
+    return await productModel.aggregate([
+      {
+        $match: { _id: mongoose.Types.ObjectId(id) },
+      },
+      {
+        $lookup: {
+          from: "brands",
+          localField: "brandId",
+          foreignField: "_id",
+          as: "brand",
+        },
+      },
+      {
+        $set: {
+          brand: { $first: "$brand" },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryIdList",
+          foreignField: "_id",
+          as: "categoryList",
+        },
+      },
+      {
+        $lookup: {
+          from: "productwarehouses",
+          localField: "_id",
+          foreignField: "productId",
+          as: "count",
+        },
+      },
+      {
+        $set: {
+          count: { $sum: "$count.productCount" },
+        },
+      },
+    ]);
   } catch (error) {
     console.error(error);
     throw error;
