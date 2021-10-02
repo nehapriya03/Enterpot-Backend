@@ -8,15 +8,12 @@ const Warehouse = mongoose.Schema({
   },
   name: {
     type: String,
-    required: true,
+    required: [true, "Please enter warehouse name."],
   },
   address: {
     type: String,
-    required: true,
+    required: [true, "Please enter warehouse address."],
   },
-  // List: {
-  //     type:
-  // }
 });
 
 module.exports = mongoose.model("Warehouse", Warehouse);

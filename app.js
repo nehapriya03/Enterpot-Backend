@@ -11,6 +11,8 @@ const salesPerson = require("./routes/SalesPersonRoute");
 const product = require("./routes/ProductRoute");
 const brand = require("./routes/BrandRoute");
 const category = require("./routes/CategoryRoute");
+const warehouse = require("./routes/WarehouseRoute");
+const productWarehouse = require("./routes/ProductWarehouseRoute");
 
 app.use(morgan("dev"));
 app.use(express.json());
@@ -20,6 +22,8 @@ app.use("/salesperson", salesPerson);
 app.use("/product", product);
 app.use("/brand", brand);
 app.use("/category", category);
+app.use("/warehouse", warehouse);
+app.use("/productwarehouse", productWarehouse);
 
 mongoose
   .connect(envData.DB, { useUnifiedTopology: true, useNewUrlParser: true })

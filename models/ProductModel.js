@@ -1,7 +1,3 @@
-// const mongoose = require("mongoose");
-// const validator = require("validator");
-// const mongooseDouble = require("mongoose-double");
-
 var mongoose = require("mongoose");
 require("mongoose-double")(mongoose);
 
