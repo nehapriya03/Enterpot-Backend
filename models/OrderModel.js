@@ -1,19 +1,19 @@
 const mongoose = require("mongoose");
-const validator = require("validator");
-const product = require("../models/ProductModel");
+// const validator = require("validator");
+// const product = require("../models/ProductModel");
 
-export const OrderStatus = {
+exports.OrderStatus = {
   PENDING: "PENDING",
   APPROVED: "APPROVED",
   REJECTED: "REJECTED",
   CANCELLED: "CANCELLED",
 };
 
-export const PaymentMode = {
+exports.PaymentMode = {
   CASH: "Cash",
 };
 
-const order = mongoose.Schema({
+const Order = mongoose.Schema({
   id: {
     type: mongoose.Types.ObjectId,
     unique: true,
@@ -50,33 +50,41 @@ const order = mongoose.Schema({
 
   status: {
     type: String,
-    default: OrderStatus.PENDING,
+    required: true,
+    default: this.OrderStatus.PENDING,
   },
 
   paymentMode: {
     type: String,
-    default: PaymentMode.CASH,
+    required: true,
+    default: this.PaymentMode.CASH,
   },
 
   totalWithoutTax: {
     type: Number,
     default: function () {
+      let tempTotalWithoutTax = 0;
       for (let productQuantity of this.productQuantityList) {
         let priceWithoutTax =
           productQuantity.quantity * productQuantity.product.price;
-        this.totalWithoutTax = this.totalWithoutTax + priceWithoutTax;
+        tempTotalWithoutTax = tempTotalWithoutTax + priceWithoutTax;
       }
+      this.totalWithoutTax = tempTotalWithoutTax;
     },
   },
 
   totalWithTax: {
     type: Number,
     default: function () {
+      let tempTotalWithTax = 0;
       for (let productQuantity of this.productQuantityList) {
         let priceWithTax =
           productQuantity.quantity * productQuantity.product.priceAfterTax;
-        this.totalWithTax = this.totalWithTax + priceWithTax;
+        tempTotalWithTax = tempTotalWithTax + priceWithTax;
       }
+      this.totalWithTax = tempTotalWithTax;
     },
   },
 });
+
+module.exports = mongoose.model("Order", Order);

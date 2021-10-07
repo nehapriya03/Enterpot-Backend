@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const salesPersonController = require("../Controller/SalesPersonController");
 
-// router.post("/signup", salesPersonController.addUser);
+router.post("/signup", salesPersonController.addSalesPerson);
 // router.get("/all", salesPersonController.getAllSalesPersons);
 // router.post("/login", salesPersonController.salespersonLogin);
 // router.get("/email/:email", salesPersonController.getSalespersonByEmail);
