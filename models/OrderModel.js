@@ -20,12 +20,12 @@ const Order = mongoose.Schema({
   },
   userId: {
     type: mongoose.Types.ObjectId,
-    unique: true,
+    // unique: true,
     required: [true, "Please enter userId."],
   },
   salesPersonId: {
     type: mongoose.Types.ObjectId,
-    unique: true,
+    // unique: true,
     required: [true, "Please enter salersPersonId."],
   },
   productQuantityList: {
