@@ -9,9 +9,9 @@ router.post(
   userController.getUsersByBusinessNameSearch
 );
 router.post("/login", userController.userLogin);
-router.put("/:id", userController.updateUserById);
+// router.put("/:id", userController.updateUserById);
 // router.get("/all", userController.getAllUsers);
-// router.get("/:id", userController.getUserById);
+router.get("/:id", userController.getUserById);
 // router.get("/email/:email", userController.getUserByEmail);
 
 module.exports = router;

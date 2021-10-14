@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const morgan = require("morgan");
 const envData = process.env;
+const cors = require("cors");
 require("dotenv").config();
 const app = express();
 
@@ -14,7 +15,9 @@ const category = require("./routes/CategoryRoute");
 const warehouse = require("./routes/WarehouseRoute");
 const productWarehouse = require("./routes/ProductWarehouseRoute");
 const order = require("./routes/OrderRoute");
+const cart = require("./routes/CartRoute");
 
+app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use("/admin", adminRoutes);
@@ -26,6 +29,7 @@ app.use("/category", category);
 app.use("/warehouse", warehouse);
 app.use("/productwarehouse", productWarehouse);
 app.use("/order", order);
+app.use("/cart", cart);
 
 mongoose
   .connect(envData.DB, { useUnifiedTopology: true, useNewUrlParser: true })

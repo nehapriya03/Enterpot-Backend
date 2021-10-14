@@ -233,7 +233,7 @@ exports.salespersonLogin = async (req, res) => {
               }
             );
             console.log(`Login sucessfull`, token);
-            return res.status(200).send(`Login sucessfull`);
+            return res.status(200).json({ salespersonFound, token });
           }
           console.error(`Incorrect credentils`);
           return res.status(400).send(`Incorrect credentials.`);
