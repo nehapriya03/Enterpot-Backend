@@ -169,7 +169,7 @@ exports.getUsersByBusinessNameSearch = async (req, res) => {
     case "I":
       return await getUsersByBusinessNameIndexSearch(req, res);
     default:
-      console.error(res.status(404).send(`Please enter correct query type.`));
+      console.error(`Please enter correct query type.`);
   }
 };
 

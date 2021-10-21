@@ -223,20 +223,21 @@ exports.updateProductById = async (req, res) => {
 
 exports.uploadProductImage = async (req, res) => {
   try {
-    s3ServiceLayer
-      .fileUploadToS3(req, res)
-      .then((results) => {
-        console.info(`Upload image to s3 bucket was sucessfull.`);
-        return res
-          .status(200)
-          .send(`Upload image to s3 bucket was sucessfull.`);
-      })
-      .catch((error) => {
-        console.error(`There was an error while uploading the picture`, error);
-        return res
-          .status(400)
-          .send(`There was an error while uploading the picture`);
-      });
+    s3ServiceLayer.fileUploadToS3(req, res);
+    console.info(`Upload image to s3 bucket was sucessfull.`);
+    return res.status(200).send(`Upload image to s3 bucket was sucessfull.`);
+    // .then((results) => {
+    //   console.info(`Upload image to s3 bucket was sucessfull.`);
+    //   return res
+    //     .status(200)
+    //     .send(`Upload image to s3 bucket was sucessfull.`);
+    // })
+    // .catch((error) => {
+    //   console.error(`There was an error while uploading the picture`, error);
+    //   return res
+    //     .status(400)
+    //     .send(`There was an error while uploading the picture`);
+    // });
   } catch (error) {
     console.error(`There was an error while uploading the image.`, error);
     return res.send(500).send(ERROR_MESSAGE);

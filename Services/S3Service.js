@@ -34,7 +34,7 @@ exports.fileUploadToS3 = (req, res) => {
       throw new Error(`There was some issue in uploading the image to s3.`);
     }
     console.info();
-    return res.status(200).send(data);
+    return res.status(200).send();
   });
 };
 
