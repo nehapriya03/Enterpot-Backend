@@ -3,7 +3,7 @@ const router = express.Router();
 
 const productWarehouseController = require("../Controller/ProductWarehouseCountController");
 
-router.post("", productWarehouseController.addProductWarehouse);
+// router.post("", productWarehouseController.addProductWarehouse);
 // router.get(
 //   "/:id",
 //   productWarehouseController.getProductWarehouseCountsByProductId
@@ -12,10 +12,10 @@ router.post("", productWarehouseController.addProductWarehouse);
 //   "/:id",
 //   productWarehouseController.getProductWarehouseCountByWarehouseId
 // );
-// router.post(
-//   "/products",
-//   productWarehouseController.getProductWarehouseCountsByProductIds
-// );
+router.post(
+  "/products",
+  productWarehouseController.getProductWarehouseCountsByProductIds
+);
 
 // router.post(
 //   "/upsert-list",
